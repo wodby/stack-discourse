@@ -1,29 +1,65 @@
-name: example-stack
-icon: nginx
-title: Example Stack
-
-env:
-- name: APP_ENV
-  value: prod
+name: discourse
+icon: discourse
+title: Discourse
 
 services:
-- name: web
-  title: Web
-  service: nginx
+- name: discourse
+  title: Discourse
+  service: discourse
   required: true
   main: true
-  replicas: 1
-  env:
-  - name: NGINX_VHOST_PRESET
-    value: html
+  links:
+  - name: db
+    service: postgres
+  - name: redis
+    service: redis
+  - name: sendmail
+    service: opensmtpd
+  volumes:
+  - name: data
+    size: 20
   workloads:
   - name: main
     containers:
-    - name: nginx
+    - name: discourse
       resources:
         request:
-          cpu: 100
-          memory: 128
-        limit:
           cpu: 500
-          memory: 512
+          memory: 2048
+        limit:
+          cpu: 2000
+          memory: 4096
+
+- name: postgres
+  title: PostgreSQL
+  service: postgres
+  required: true
+  env:
+  - name: POSTGRES_DB_EXTENSIONS
+    value: hstore,pg_trgm,unaccent,vector
+  volumes:
+  - name: data
+    size: 20
+
+- name: redis
+  title: Redis
+  service: redis
+  required: true
+  env:
+  - name: REDIS_MAXMEMORY
+    value: 512m
+  - name: REDIS_MAXMEMORY_POLICY
+    value: noeviction
+  - name: REDIS_SAVE_TO_DISK
+    value: '1'
+  volumes:
+  - name: data
+    size: 5
+
+- name: opensmtpd
+  title: OpenSMTPD
+  service: opensmtpd
+  required: true
+  volumes:
+  - name: spool
+    size: 1
