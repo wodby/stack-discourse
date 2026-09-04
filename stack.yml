@@ -1,0 +1,29 @@
+name: example-stack
+icon: nginx
+title: Example Stack
+
+env:
+- name: APP_ENV
+  value: prod
+
+services:
+- name: web
+  title: Web
+  service: nginx
+  required: true
+  main: true
+  replicas: 1
+  env:
+  - name: NGINX_VHOST_PRESET
+    value: html
+  workloads:
+  - name: main
+    containers:
+    - name: nginx
+      resources:
+        request:
+          cpu: 100
+          memory: 128
+        limit:
+          cpu: 500
+          memory: 512
