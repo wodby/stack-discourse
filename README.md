@@ -1,47 +1,37 @@
-# Wodby stack template
+# Discourse stack for Kubernetes on Wodby
 
-This repository is a starter for a Git-backed Wodby stack. Wodby imports
-`stack.yml` from the selected Git ref and creates a new stack revision every
-time you import or update it from Git.
+Deploy [Discourse](https://www.discourse.org/) applications on Kubernetes with Wodby.
 
-The included manifest defines a small stack with one required nginx service.
-Use it as a working baseline, then replace the service references and overrides
-with the services your stack should manage.
+The stack uses a connected source build rather than a prebuilt Wodby Discourse image. Select the upstream stable or ESR boilerplate, clone one into your own repository, or connect a compatible Discourse fork. Wodby CI builds the selected source on the official `discourse/base` image.
 
-## Files
+## Services
 
-- `stack.yml` - the Wodby stack manifest.
+- **Discourse** builds and runs nginx, Unicorn, and Sidekiq in one stateful pod.
+- **PostgreSQL** stores forum data and provisions `hstore`, `pg_trgm`, `unaccent`, and `vector`.
+- **Redis** stores cache, message-bus, and Sidekiq state with persistence enabled and eviction disabled.
+- **OpenSMTPD** delivers forum email directly or through a selected third-party SMTP integration.
 
-## Start here
+All four services are required because working outbound email is part of Discourse account and administration workflows.
 
-1. Change `name`, `title`, and `icon` in `stack.yml`.
-2. Replace `services[].service` with the Wodby service name or versioned service
-   reference you want to include, for example `php` or `php:8.3`.
-3. Keep `services[].name` as the stack-local service name. It does not have to
-   match the referenced service name.
-4. Use `services[].links` to satisfy required links declared by service
-   manifests.
-5. Use `services[].workloads`, `services[].env`, `services[].volumes`,
-   `services[].configs`, and `services[].helm` only for stack-level overrides.
+## Initial configuration
 
-If you use this with the companion service template, import the service first
-and then change the stack service reference to `example-service:1.0`.
+Set `Administrator email addresses` on the Discourse service before the first deployment. For reliable delivery, attach an SMTP integration to OpenSMTPD.
 
-## Multiple stacks
+## Capacity
 
-A repository can contain multiple stacks. Put each stack in its own directory
-and add an `index.yml` at the repository root:
+The default storage allocation is:
 
-```yaml
-stacks:
-- api
-- worker
-```
+- 20 GiB for Discourse uploads, backups, and logs
+- 20 GiB for PostgreSQL
+- 5 GiB for Redis persistence
+- 1 GiB for the OpenSMTPD queue
 
-Each listed directory must contain its own `stack.yml`.
+The Discourse container requests 2 GiB of memory and 0.5 CPU, with limits of 4 GiB and 2 CPU.
 
-## References
+## Backups and upgrades
 
-- Stack template reference: https://wodby.com/docs/2.0/stacks/template/
-- Stack services: https://wodby.com/docs/2.0/stacks/services/
-- Naming rules: https://wodby.com/docs/2.0/naming/
+Use the Discourse service backup for a coherent archive containing the database and local uploads. Regularly restore an artifact into a disposable app to verify disaster recovery.
+
+Upgrade by rebuilding from a newer supported Discourse Git ref. Do not update Discourse from its administration interface.
+
+This initial stack intentionally uses one Discourse replica. A future high-availability variant must separate web and Sidekiq workloads, coordinate migrations, and move uploads to shared or object storage before increasing replica counts.
