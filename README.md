@@ -35,3 +35,48 @@ Use the Discourse service backup for a coherent archive containing the database 
 Upgrade by rebuilding from a newer supported Discourse Git ref. Do not update Discourse from its administration interface.
 
 This initial stack intentionally uses one Discourse replica. A future high-availability variant must separate web and Sidekiq workloads, coordinate migrations, and move uploads to shared or object storage before increasing replica counts.
+
+<!-- wodby:generated:start -->
+
+## Stack contract
+
+- [Discourse stack on Wodby](https://wodby.com/stacks/discourse)
+- [Browse Wodby application stacks](https://wodby.com/stacks)
+- [Wodby stack documentation](https://wodby.com/docs/2.0/stacks/)
+- [Stack manifest reference](https://wodby.com/docs/2.0/stacks/template/)
+
+## Start from a boilerplate
+
+Use one of the compatible boilerplates exposed by this stack's services to
+start with Wodby CI build configuration:
+
+- [Discourse stable](https://github.com/discourse/discourse)
+- [Discourse ESR](https://github.com/discourse/discourse)
+
+## Service definitions
+
+- [Discourse service](https://github.com/wodby/service-discourse)
+- [PostgreSQL service](https://github.com/wodby/service-postgres)
+- [Redis service](https://github.com/wodby/service-redis)
+- [OpenSMTPD service](https://github.com/wodby/service-opensmtpd)
+
+## What's included
+
+| Component / service | Default configuration |
+| --- | --- |
+| Discourse<br>`discourse` | required; enabled by default; volumes: `data` 20 GB; links: `db` → `postgres`, `redis` → `redis`, `sendmail` → `opensmtpd` |
+| PostgreSQL<br>`postgres` | required; enabled by default; volumes: `data` 20 GB |
+| Redis<br>`redis` | required; enabled by default; volumes: `data` 5 GB |
+| OpenSMTPD<br>`opensmtpd` | required; enabled by default; volumes: `spool` 1 GB |
+
+Enabled optional services are selected by default but can be excluded when an
+app is created. Disabled optional services are available but not selected by
+default. Required services cannot be excluded.
+
+## Validate the stack manifest
+
+```bash
+wodby stack validate-manifest stack.yml --org <org-id>
+```
+
+<!-- wodby:generated:end -->
