@@ -42,6 +42,7 @@ This initial stack intentionally uses one Discourse replica. A future high-avail
 
 - [Discourse stack on Wodby](https://wodby.com/stacks/discourse)
 - [Browse Wodby application stacks](https://wodby.com/stacks)
+- [Discourse stack guide](https://wodby.com/docs/2.0/stacks/catalog/discourse/)
 - [Wodby stack documentation](https://wodby.com/docs/2.0/stacks/)
 - [Stack manifest reference](https://wodby.com/docs/2.0/stacks/template/)
 
