@@ -2,11 +2,11 @@
 
 Deploy [Discourse](https://www.discourse.org/) applications on Kubernetes with Wodby.
 
-The stack uses a connected source build rather than a prebuilt Wodby Discourse image. Select the upstream stable or ESR boilerplate, clone one into your own repository, or connect a compatible Discourse fork. Wodby CI builds the selected source on the official `discourse/base` image.
+The stack runs the prebuilt [wodby/discourse](https://github.com/wodby/discourse) image, with no repository and no build. Choose the monthly release (`2026.10`) or the extended support release (`2026.7`). Plugins bundled with Discourse are available, and themes are installed from the administration interface; other plugins are not supported.
 
 ## Services
 
-- **Discourse** builds and runs nginx, Unicorn, and Sidekiq in one stateful pod.
+- **Discourse** runs nginx, Unicorn, and Sidekiq in one stateful pod.
 - **PostgreSQL** stores forum data and provisions `hstore`, `pg_trgm`, `unaccent`, and `vector`.
 - **Redis** stores cache, message-bus, and Sidekiq state with persistence enabled and eviction disabled.
 - **OpenSMTPD** delivers forum email directly or through a selected third-party SMTP integration.
@@ -32,7 +32,9 @@ The Discourse container requests 2 GiB of memory and 0.5 CPU, with limits of 4 G
 
 Use the Discourse service backup for a coherent archive containing the database and local uploads. Regularly restore an artifact into a disposable app to verify disaster recovery.
 
-Upgrade by rebuilding from a newer supported Discourse Git ref. Do not update Discourse from its administration interface.
+Discourse is upgraded by a newer image: a new revision of the selected release line brings its patch releases. Do not update Discourse from its administration interface.
+
+Applications created from earlier versions of this stack build Discourse from a repository and keep doing so. To move one to the prebuilt image, create a new application from this stack and restore a Discourse backup into it.
 
 This initial stack intentionally uses one Discourse replica. A future high-availability variant must separate web and Sidekiq workloads, coordinate migrations, and move uploads to shared or object storage before increasing replica counts.
 
@@ -45,14 +47,6 @@ This initial stack intentionally uses one Discourse replica. A future high-avail
 - [Discourse stack guide](https://wodby.com/docs/2.0/stacks/catalog/discourse/)
 - [Wodby stack documentation](https://wodby.com/docs/2.0/stacks/)
 - [Stack manifest reference](https://wodby.com/docs/2.0/stacks/template/)
-
-## Start from a boilerplate
-
-Use one of the compatible boilerplates exposed by this stack's services to
-start with Wodby CI build configuration:
-
-- [Discourse stable](https://github.com/discourse/discourse)
-- [Discourse ESR](https://github.com/discourse/discourse)
 
 ## Service definitions
 
