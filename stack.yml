@@ -30,8 +30,8 @@ services:
     - name: discourse
       resources:
         request:
-          cpu: 500
-          memory: 2048
+          cpu: 10
+          memory: 1120
         limit:
           cpu: 2000
           memory: 4096
