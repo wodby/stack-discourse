@@ -2,6 +2,7 @@ name: discourse
 icon: discourse
 docs: https://wodby.com/docs/2.0/stacks/catalog/discourse/
 title: Discourse
+category: collaboration
 # The main stack of the Discourse variants: the catalog shows this next to the
 # link to it on the variants' pages.
 variantDescription: >-
